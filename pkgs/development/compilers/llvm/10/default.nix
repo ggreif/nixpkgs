@@ -32,7 +32,7 @@ let
       '';
     };
 
-  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "0mybrjr6yyrzzn8wyyzhq8l9k2bc2x8yradli4zwmlm8brpwkmby";
+  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "189l0b4lhfavjf1nb6w4dljz9l5dr8739xvlfwxshkq33jg1i03s";
 
   tools = stdenv.lib.makeExtensible (tools: let
     callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
