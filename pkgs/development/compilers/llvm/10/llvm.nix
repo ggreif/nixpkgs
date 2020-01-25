@@ -31,18 +31,16 @@ in stdenv.mkDerivation (rec {
   pname = "llvm";
   inherit version;
 
-  src = fetch pname "07ik5hzagbnj7i04as1jh55rpk9ksn4zniq3br7p7x75gzfvls2w";
-  # polly_src = fetch "polly" "07ik5hzagbnj7i04as1jh55rpk9ksn4zniq3br7p7x75gzfvls2w";
+  src = fetch pname "1igkyhwxffgqiglqgdprnr56hxjazzqpk15sy00i3hiwzj03issv";
+  polly_src = fetch "polly" "1prjbpk6q34739ajvaayw5ygm0bnmcbq5fpa7dc210191rz2gcrf";
 
   unpackPhase = ''
     unpackFile $src
-    ls -l
-    mv llvm-project-llvmorg-*/llvm llvm
-    # mv llvm-${version}* llvm
+    mv llvm-${version}* llvm
     sourceRoot=$PWD/llvm
   '' + optionalString enablePolly ''
-    # unpackFile $polly_src
-    mv llvm-project-llvmorg-*/polly $sourceRoot/tools/polly
+    unpackFile $polly_src
+    mv polly-* $sourceRoot/tools/polly
   '';
 
   outputs = [ "out" "python" ]
