@@ -14,18 +14,45 @@ let
     inherit sha256;
   };
 
-  fetchBranchXX = name: sha256: fetchFromGitHub "llvm" "llvm-project" "llvmorg-${branchpoint_version}" sha256;
+  fetchBranchXX = name: sha256: fetchFromGitHub "llvm" "llvm-project" "llvmorg-${branchpoint_version}" sha256; # eta-reduce!
 
   fetchBranch = name: sha256: fetchurl {
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-${branchpoint_version}.tar.gz";
     inherit sha256;
   }; # fixme: fetchFromGitHub "llvm" "llvm-project" "llvmorg-${branchpoint_version}" sha256
 
-  clang-tools-extra_src = fetch "clang-tools-extra" "01vgzd4k1q93nfs8gyl83mjlc4x0qsgfqw32lacbjzdxg0mdfvxj";
+
+
+
+
+
+  fetchBranchSub = name: sha256:
+    fetchurl {
+      name = "XXX${name}-${branchpoint_version}.tar.gz";
+      inherit sha256;
+      url = "https://github.com/llvm/llvm-project/archive/llvmorg-${branchpoint_version}.tar.gz";
+      downloadToTemp = true;
+      postFetch = ''
+        echo "IN #$out#  name: #${name}# postFetch  $downloadedFile     ---> $out"
+        mv $downloadedFile $downloadedFile.tar.gz
+        unpackFile $downloadedFile.tar.gz
+        ls
+        echo "INSIDE"
+        ls -d llvm-project-*/*
+        mv llvm-project-*/${name} ${name}-${version}
+        rm -r llvm-project-*
+        tar -czf $out ${name}-${version}
+        rm -r ${name}-${version}
+        ls
+      '';
+    };
+
+  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "0mybrjr6yyrzzn8wyyzhq8l9k2bc2x8yradli4zwmlm8brpwkmby";
 
   tools = stdenv.lib.makeExtensible (tools: let
     callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
     callBranchPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranch; });
+    callBranchSubPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranchSub; });
     mkExtraBuildCommands = cc: ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -40,10 +67,10 @@ let
     llvm = callBranchPackage ./llvm.nix { };
     llvm-polly = callBranchPackage ./llvm.nix { enablePolly = true; };
 
-    clang-unwrapped = callPackage ./clang {
+    clang-unwrapped = callBranchSubPackage ./clang {
       inherit clang-tools-extra_src;
     };
-    clang-polly-unwrapped = callPackage ./clang {
+    clang-polly-unwrapped = callBranchSubPackage ./clang {
       inherit clang-tools-extra_src;
       llvm = tools.llvm-polly;
       enablePolly = true;
@@ -172,9 +199,10 @@ let
 
   libraries = stdenv.lib.makeExtensible (libraries: let
     callPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
+    callBranchSubPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranchSub; });
   in {
 
-    compiler-rt = callPackage ./compiler-rt.nix ({} //
+    compiler-rt = callBranchSubPackage ./compiler-rt.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoCompilerRt;
       }));
@@ -183,12 +211,12 @@ let
 
     libcxxStdenv = overrideCC stdenv buildLlvmTools.libcxxClang;
 
-    libcxx = callPackage ./libc++ ({} //
+    libcxx = callBranchSubPackage ./libc++ ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
       }));
 
-    libcxxabi = callPackage ./libc++abi.nix ({} //
+    libcxxabi = callBranchSubPackage ./libc++abi.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
         libunwind = libraries.libunwind;

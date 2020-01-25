@@ -9,7 +9,7 @@ let
     pname = "clang";
     inherit version;
 
-    src = fetch "clang" "0ls2h3iv4finqyflyhry21qhc9cm9ga7g1zq21020p065qmm2y2p";
+    src = fetch "clang" "0ikq6pyx9631l3aiibwilsrxqg89bdwj68hmg5czhgmb8jda5x38";
 
     unpackPhase = ''
       unpackFile $src
@@ -26,7 +26,7 @@ let
       ++ stdenv.lib.optional stdenv.isDarwin fixDarwinDylibNames;
 
     cmakeFlags = [
-      "-DCMAKE_CXX_FLAGS=-std=c++11"
+      "-DCMAKE_CXX_FLAGS=-std=c++14"
       "-DCLANGD_BUILD_XPC=OFF"
     ] ++ stdenv.lib.optionals enableManpages [
       "-DCLANG_INCLUDE_DOCS=ON"
