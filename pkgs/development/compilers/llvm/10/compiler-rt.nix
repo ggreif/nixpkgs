@@ -39,6 +39,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./compiler-rt-codesign.patch # Revert compiler-rt commit that makes codesign mandatory
+    ./find_darwin_sdk_version.patch # don't test for macOS >= 10.15
   ];# ++ stdenv.lib.optional stdenv.hostPlatform.isMusl ./sanitizers-nongnu.patch
 
   # TSAN requires XPC on Darwin, which we have no public/free source files for. We can depend on the Apple frameworks
