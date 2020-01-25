@@ -5,7 +5,7 @@
 }:
 
 let
-  release_version = "9.0.1";
+  release_version = "10.0.0";
   branchpoint_version = "11-init";
   version = "10.0.0-branch"; # differentiating these is important for rc's
 
@@ -25,7 +25,7 @@ let
 
   tools = stdenv.lib.makeExtensible (tools: let
     callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
-    callBranchPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl version; fetch = fetchBranch; release_version = branchpoint_version; });
+    callBranchPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranch; });
     mkExtraBuildCommands = cc: ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
