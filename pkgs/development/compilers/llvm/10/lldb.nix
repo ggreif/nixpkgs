@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
 
   src = fetch pname "0qin2xkv344s58qz35m6v9y6gkay96yvyys2hfzpbhi1yg29c0xp";
 
-  patches = [ ./lldb-procfs.patch ];
+  patches = [ ./lldb-procfs.patch ./lldb-compression.patch ];
 
   nativeBuildInputs = [ cmake python which swig lit ];
   buildInputs = [

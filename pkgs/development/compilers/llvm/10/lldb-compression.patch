@@ -1,0 +1,12 @@
+--- a/tools/debugserver/source/RNBRemote.cpp	2020-01-26 14:59:44.000000000 +0100
++++ b/tools/debugserver/source/RNBRemote.cpp	2020-01-26 15:01:14.000000000 +0100
+@@ -41,7 +41,9 @@
+ #include "RNBSocket.h"
+ #include "StdStringExtractor.h"
+ 
++#if defined(HAVE_LIBCOMPRESSION)
+ #include <compression.h>
++#endif
+ 
+ #include <TargetConditionals.h>
+ #include <iomanip>
