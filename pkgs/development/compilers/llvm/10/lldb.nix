@@ -57,7 +57,7 @@ stdenv.mkDerivation rec {
   postInstall = ''
     # man page
     mkdir -p $out/share/man/man1
-    echo HERE----
+    echo HERE---- $PWD
     ls -ld .
     echo HERE--------------
     ls -l .
@@ -66,6 +66,10 @@ stdenv.mkDerivation rec {
     ls -ld ..
     echo UP----------------
     ls -l ..
+    echo DOCS----
+    ls -ld ../docs
+    echo DOCS----------------
+    ls -l ../docs
 
     # Editor support
     # vscode:
