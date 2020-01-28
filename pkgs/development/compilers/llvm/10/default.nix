@@ -18,7 +18,7 @@ let
 
   fetchBranchSub = name: sha256:
     fetchurl {
-      name = "X${name}-${branchpoint_version}.tar.gz";
+      name = "${name}-${branchpoint_version}.tar.gz";
       inherit sha256;
       url = "https://github.com/llvm/llvm-project/archive/llvmorg-${branchpoint_version}.tar.gz";
       downloadToTemp = true;
@@ -27,12 +27,12 @@ let
         unpackFile $downloadedFile.tar.gz
         mv llvm-project-*/${name} ${name}-${version}
         rm -r llvm-project-*
-        tar -czf $out ${name}-${version}
+        tar --sort=name --mtime="1970-01-01" --owner=0 --group=0 --numeric-owner -czf $out ${name}-${version}
         rm -r ${name}-${version}
       '';
     };
 
-  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "189l0b4lhfavjf1nb6w4dljz9l5dr8739xvlfwxshkq33jg1i03s";
+  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "1rvc9mmj25aajvv63g8jha1fdfl4i00gf4dy4xcl0nypyy3yxfrh";
 
   tools = stdenv.lib.makeExtensible (tools: let
     callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
