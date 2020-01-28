@@ -47,14 +47,25 @@ stdenv.mkDerivation rec {
     "-DLLDB_CODESIGN_IDENTITY=" # codesigning makes nondeterministic
     "-DClang_DIR=${clang-unwrapped}/lib/cmake"
     "-DLLVM_EXTERNAL_LIT=${lit}/bin/lit"
-  ];
+  ] ++ stdenv.lib.optionals stdenv.isDarwin [
+    "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
+  ]
+;
 
   enableParallelBuilding = true;
 
   postInstall = ''
     # man page
     mkdir -p $out/share/man/man1
-    install ../docs/lldb.1 -t $out/share/man/man1/
+    echo HERE----
+    ls -ld .
+    echo HERE--------------
+    ls -l .
+    # install ../docs/lldb.1 -t $out/share/man/man1/
+    echo UP----
+    ls -ld ..
+    echo UP----------------
+    ls -l ..
 
     # Editor support
     # vscode:
