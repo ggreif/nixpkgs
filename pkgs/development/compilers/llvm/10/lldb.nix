@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
   pname = "lldb";
   inherit version;
 
-  src = fetch pname "0izv5frhvqa28j0ahvi9yrp217knnv4hmpsjv3lw5gz9nblkjfag";
+  src = fetch pname "0w9d29vsprj69gfxxn6llkvhlxp25vlbbpv64r32kir2s6h8nyyd";
 
   patches = [ ./lldb-procfs.patch ./lldb-compression.patch ];
 
@@ -57,19 +57,7 @@ stdenv.mkDerivation rec {
   postInstall = ''
     # man page
     mkdir -p $out/share/man/man1
-    echo HERE---- $PWD
-    ls -ld .
-    echo HERE--------------
-    ls -l .
-    # install ../docs/lldb.1 -t $out/share/man/man1/
-    echo UP----
-    ls -ld ..
-    echo UP----------------
-    ls -l ..
-    echo DOCS----
-    ls -ld ../docs
-    echo DOCS----------------
-    ls -l ../docs
+    install ../docs/lldb.1 -t $out/share/man/man1/
 
     # Editor support
     # vscode:

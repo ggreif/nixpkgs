@@ -1,43 +1,23 @@
 { lowPrio, newScope, pkgs, stdenv, cmake, libstdcxxHook
-, libxml2, python, isl, fetchurl, fetchFromGitHub, overrideCC, wrapCCWith, wrapBintoolsWith
+, libxml2, python, isl, fetchurl, overrideCC, wrapCCWith, wrapBintoolsWith
 , buildLlvmTools # tools, but from the previous stage, for cross
 , targetLlvmLibraries # libraries, but from the next stage, for cross
 }:
 
 let
   release_version = "10.0.0";
-  branchpoint_version = "10.0.0-rc1";
-  version = "10.0.0-rc1"; # differentiating these is important for rc's
+  candidate = "rc1";
+  version = "10.0.0${candidate}"; # differentiating these is important for rc's
 
   fetch = name: sha256: fetchurl {
-    url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-${release_version}/${name}-${release_version}.src.tar.xz";
+    url = "https://prereleases.llvm.org/${release_version}/rc1/${name}-${version}.src.tar.xz";
     inherit sha256;
   };
 
-  fetchBranchXX = name: sha256: fetchFromGitHub "llvm" "llvm-project" "llvmorg-${branchpoint_version}" sha256; # eta-reduce!
-
-  fetchBranchSub = name: sha256:
-    fetchurl {
-      name = "${name}-${branchpoint_version}.tar.gz";
-      inherit sha256;
-      url = "https://github.com/llvm/llvm-project/archive/llvmorg-${branchpoint_version}.tar.gz";
-      downloadToTemp = true;
-      postFetch = ''
-        mv $downloadedFile $downloadedFile.tar.gz
-        unpackFile $downloadedFile.tar.gz
-        mv llvm-project-*/${name} ${name}-${version}
-        rm -r llvm-project-*
-        tar --sort=name --mtime="1970-01-01" --owner=0 --group=0 --numeric-owner -czf $out ${name}-${version}
-        rm -r ${name}-${version}
-      '';
-    };
-
-  clang-tools-extra_src = fetchBranchSub "clang-tools-extra" "1rvc9mmj25aajvv63g8jha1fdfl4i00gf4dy4xcl0nypyy3yxfrh";
+  clang-tools-extra_src = fetch "clang-tools-extra" "0fpmsdsv3nc270pbv5qry6gk0sp9vnpcgw98y256n6q52m4lbcfj";
 
   tools = stdenv.lib.makeExtensible (tools: let
     callPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
-    # callBranchPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranch; });
-    callBranchSubPackage = newScope (tools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranchSub; });
     mkExtraBuildCommands = cc: ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
@@ -49,13 +29,13 @@ let
     '';
   in {
 
-    llvm = callBranchSubPackage ./llvm.nix { };
-    llvm-polly = callBranchSubPackage ./llvm.nix { enablePolly = true; };
+    llvm = callPackage ./llvm.nix { };
+    llvm-polly = callPackage ./llvm.nix { enablePolly = true; };
 
-    clang-unwrapped = callBranchSubPackage ./clang {
+    clang-unwrapped = callPackage ./clang {
       inherit clang-tools-extra_src;
     };
-    clang-polly-unwrapped = callBranchSubPackage ./clang {
+    clang-polly-unwrapped = callPackage ./clang {
       inherit clang-tools-extra_src;
       llvm = tools.llvm-polly;
       enablePolly = true;
@@ -95,9 +75,9 @@ let
       extraBuildCommands = mkExtraBuildCommands cc;
     };
 
-    lld = callBranchSubPackage ./lld.nix {};
+    lld = callPackage ./lld.nix {};
 
-    lldb = callBranchSubPackage ./lldb.nix {};
+    lldb = callPackage ./lldb.nix {};
 
     # Below, is the LLVM bootstrapping logic. It handles building a
     # fully LLVM toolchain from scratch. No GCC toolchain should be
@@ -183,11 +163,10 @@ let
   });
 
   libraries = stdenv.lib.makeExtensible (libraries: let
-    # callPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
-    callBranchSubPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version; fetch = fetchBranchSub; });
+    callPackage = newScope (libraries // buildLlvmTools // { inherit stdenv cmake libxml2 python isl release_version version fetch; });
   in {
 
-    compiler-rt = callBranchSubPackage ./compiler-rt.nix ({} //
+    compiler-rt = callPackage ./compiler-rt.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoCompilerRt;
       }));
@@ -196,20 +175,20 @@ let
 
     libcxxStdenv = overrideCC stdenv buildLlvmTools.libcxxClang;
 
-    libcxx = callBranchSubPackage ./libc++ ({} //
+    libcxx = callPackage ./libc++ ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
       }));
 
-    libcxxabi = callBranchSubPackage ./libc++abi.nix ({} //
+    libcxxabi = callPackage ./libc++abi.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
         libunwind = libraries.libunwind;
       }));
 
-    openmp = callBranchSubPackage ./openmp.nix {};
+    openmp = callPackage ./openmp.nix {};
 
-    libunwind = callBranchSubPackage ./libunwind.nix ({} //
+    libunwind = callPackage ./libunwind.nix ({} //
       (stdenv.lib.optionalAttrs (stdenv.hostPlatform.useLLVM or false) {
         stdenv = overrideCC stdenv buildLlvmTools.lldClangNoLibcxx;
       }));
