@@ -6,8 +6,8 @@
 
 let
   release_version = "10.0.0";
-  branchpoint_version = "11-init";
-  version = "10.0.0-branch"; # differentiating these is important for rc's
+  branchpoint_version = "10.0.0-rc1";
+  version = "10.0.0-rc1"; # differentiating these is important for rc's
 
   fetch = name: sha256: fetchurl {
     url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-${release_version}/${name}-${release_version}.src.tar.xz";
