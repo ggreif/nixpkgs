@@ -53,7 +53,6 @@ stdenv.mkDerivation rec {
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
     "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
   ] ++ stdenv.lib.optionals enableManpages [
-    "-DLLVM_BUILD_DOCS=OFF"
     "-DLLVM_ENABLE_SPHINX=ON"
     "-DSPHINX_OUTPUT_MAN=ON"
     "-DSPHINX_OUTPUT_HTML=OFF"
