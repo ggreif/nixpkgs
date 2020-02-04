@@ -13,6 +13,7 @@
 , version
 , darwin
 , lit
+, enableManpages ? true
 }:
 
 stdenv.mkDerivation rec {
@@ -21,9 +22,11 @@ stdenv.mkDerivation rec {
 
   src = fetch pname "0w9d29vsprj69gfxxn6llkvhlxp25vlbbpv64r32kir2s6h8nyyd";
 
-  patches = [ ./lldb-procfs.patch ./lldb-compression.patch ];
+  patches = [ ./lldb-procfs.patch ];
 
-  nativeBuildInputs = [ cmake python which swig lit ];
+  nativeBuildInputs = [ cmake python which swig lit ]
+    ++ stdenv.lib.optionals enableManpages [ python.pkgs.sphinx python.pkgs.recommonmark ];
+
   buildInputs = [
     ncurses
     zlib
@@ -49,6 +52,11 @@ stdenv.mkDerivation rec {
     "-DLLVM_EXTERNAL_LIT=${lit}/bin/lit"
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
     "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
+  ] ++ stdenv.lib.optionals enableManpages [
+    "-DLLVM_BUILD_DOCS=OFF"
+    "-DLLVM_ENABLE_SPHINX=ON"
+    "-DSPHINX_OUTPUT_MAN=ON"
+    "-DSPHINX_OUTPUT_HTML=OFF"
   ]
 ;
 
@@ -57,7 +65,8 @@ stdenv.mkDerivation rec {
   postInstall = ''
     # man page
     mkdir -p $out/share/man/man1
-    install ../docs/lldb.1 -t $out/share/man/man1/
+    make docs-lldb-man
+    make -C docs install
 
     # Editor support
     # vscode:
@@ -68,7 +77,7 @@ stdenv.mkDerivation rec {
 
   meta = with stdenv.lib; {
     description = "A next-generation high-performance debugger";
-    homepage = http://llvm.org/;
+    homepage = http://lldb.llvm.org;
     license = licenses.ncsa;
     platforms = platforms.all;
   };
