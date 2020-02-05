@@ -121,7 +121,7 @@ in stdenv.mkDerivation (rec {
     "-DSPHINX_WARNINGS_AS_ERRORS=OFF"
   ] ++ optionals (!isDarwin) [
     "-DLLVM_BINUTILS_INCDIR=${libbfd.dev}/include"
-  ] ++ optionals (isDarwin) [
+  ] ++ optionals isDarwin [
     "-DLLVM_ENABLE_LIBCXX=ON"
     "-DCAN_TARGET_i386=false"
   ] ++ optionals (stdenv.hostPlatform != stdenv.buildPlatform) [

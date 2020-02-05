@@ -65,7 +65,7 @@ stdenv.mkDerivation rec {
     # man page
     mkdir -p $out/share/man/man1
     make docs-lldb-man
-    make -C docs install
+    install docs/man/lldb.1 -t $out/share/man/man1/
 
     # Editor support
     # vscode:
