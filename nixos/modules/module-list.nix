@@ -62,6 +62,7 @@
   ./hardware/printers.nix
   ./hardware/raid/hpsa.nix
   ./hardware/steam-hardware.nix
+  ./hardware/tuxedo-keyboard.nix
   ./hardware/usb-wwan.nix
   ./hardware/onlykey.nix
   ./hardware/video/amdgpu.nix
@@ -116,6 +117,7 @@
   ./programs/fish.nix
   ./programs/freetds.nix
   ./programs/fuse.nix
+  ./programs/geary.nix
   ./programs/gnome-disks.nix
   ./programs/gnome-documents.nix
   ./programs/gnome-terminal.nix
@@ -279,6 +281,7 @@
   ./services/databases/riak.nix
   ./services/databases/riak-cs.nix
   ./services/databases/stanchion.nix
+  ./services/databases/victoriametrics.nix
   ./services/databases/virtuoso.nix
   ./services/desktops/accountsservice.nix
   ./services/desktops/bamf.nix
@@ -425,6 +428,7 @@
   ./services/misc/exhibitor.nix
   ./services/misc/felix.nix
   ./services/misc/folding-at-home.nix
+  ./services/misc/freeswitch.nix
   ./services/misc/fstrim.nix
   ./services/misc/gammu-smsd.nix
   ./services/misc/geoip-updater.nix
@@ -525,6 +529,7 @@
   ./services/monitoring/prometheus/alertmanager.nix
   ./services/monitoring/prometheus/exporters.nix
   ./services/monitoring/prometheus/pushgateway.nix
+  ./services/monitoring/prometheus/xmpp-alerts.nix
   ./services/monitoring/riemann.nix
   ./services/monitoring/riemann-dash.nix
   ./services/monitoring/riemann-tools.nix
@@ -586,7 +591,7 @@
   ./services/networking/dhcpd.nix
   ./services/networking/dnscache.nix
   ./services/networking/dnschain.nix
-  ./services/networking/dnscrypt-proxy.nix
+  ./services/networking/dnscrypt-proxy2.nix
   ./services/networking/dnscrypt-wrapper.nix
   ./services/networking/dnsdist.nix
   ./services/networking/dnsmasq.nix
@@ -805,6 +810,7 @@
   ./services/web-apps/codimd.nix
   ./services/web-apps/cryptpad.nix
   ./services/web-apps/documize.nix
+  ./services/web-apps/dokuwiki.nix
   ./services/web-apps/frab.nix
   ./services/web-apps/gotify-server.nix
   ./services/web-apps/icingaweb2/icingaweb2.nix
@@ -862,7 +868,6 @@
   ./services/x11/unclutter.nix
   ./services/x11/unclutter-xfixes.nix
   ./services/x11/desktop-managers/default.nix
-  ./services/x11/display-managers/auto.nix
   ./services/x11/display-managers/default.nix
   ./services/x11/display-managers/gdm.nix
   ./services/x11/display-managers/lightdm.nix

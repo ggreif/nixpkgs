@@ -241,6 +241,8 @@ let
 
     duff = callPackage ../development/ocaml-modules/duff { };
 
+    dum = callPackage ../development/ocaml-modules/dum { };
+
     dune = callPackage ../development/tools/ocaml/dune { };
 
     dune_2 = callPackage ../development/tools/ocaml/dune/2.nix { };
@@ -559,6 +561,8 @@ let
     num = if lib.versionOlder "4.06" ocaml.version
       then callPackage ../development/ocaml-modules/num {}
       else null;
+
+    parmap = callPackage ../development/ocaml-modules/parmap { };
 
     comparelib = callPackage ../development/ocaml-modules/comparelib { };
 

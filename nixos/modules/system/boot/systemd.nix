@@ -697,6 +697,16 @@ in
       '';
     };
 
+    systemd.sleep.extraConfig = mkOption {
+      default = "";
+      type = types.lines;
+      example = "HibernateDelaySec=1h";
+      description = ''
+        Extra config options for systemd sleep state logic.
+        See sleep.conf.d(5) man page for available options.
+      '';
+    };
+
     systemd.user.extraConfig = mkOption {
       default = "";
       type = types.lines;
@@ -863,17 +873,22 @@ in
 
       "systemd/sleep.conf".text = ''
         [Sleep]
+        ${config.systemd.sleep.extraConfig}
       '';
 
       # install provided sysctl snippets
       "sysctl.d/50-coredump.conf".source = "${systemd}/example/sysctl.d/50-coredump.conf";
       "sysctl.d/50-default.conf".source = "${systemd}/example/sysctl.d/50-default.conf";
 
+      "tmpfiles.d/home.conf".source = "${systemd}/example/tmpfiles.d/home.conf";
       "tmpfiles.d/journal-nocow.conf".source = "${systemd}/example/tmpfiles.d/journal-nocow.conf";
+      "tmpfiles.d/portables.conf".source = "${systemd}/example/tmpfiles.d/portables.conf";
       "tmpfiles.d/static-nodes-permissions.conf".source = "${systemd}/example/tmpfiles.d/static-nodes-permissions.conf";
       "tmpfiles.d/systemd.conf".source = "${systemd}/example/tmpfiles.d/systemd.conf";
+      "tmpfiles.d/systemd-nologin.conf".source = "${systemd}/example/tmpfiles.d/systemd-nologin.conf";
       "tmpfiles.d/systemd-nspawn.conf".source = "${systemd}/example/tmpfiles.d/systemd-nspawn.conf";
       "tmpfiles.d/systemd-tmp.conf".source = "${systemd}/example/tmpfiles.d/systemd-tmp.conf";
+      "tmpfiles.d/tmp.conf".source = "${systemd}/example/tmpfiles.d/tmp.conf";
       "tmpfiles.d/var.conf".source = "${systemd}/example/tmpfiles.d/var.conf";
       "tmpfiles.d/x11.conf".source = "${systemd}/example/tmpfiles.d/x11.conf";
 
