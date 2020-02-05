@@ -13,6 +13,7 @@
 , version
 , darwin
 , lit
+, enableManpages ? true
 }:
 
 stdenv.mkDerivation rec {
@@ -23,7 +24,8 @@ stdenv.mkDerivation rec {
 
   patches = [ ./lldb-procfs.patch ];
 
-  nativeBuildInputs = [ cmake python which swig lit python.pkgs.sphinx python.pkgs.recommonmark ];
+  nativeBuildInputs = [ cmake python which swig lit ]
+    ++ stdenv.lib.optionals enableManpages [ python.pkgs.sphinx python.pkgs.recommonmark ];
 
   buildInputs = [
     ncurses
@@ -48,11 +50,12 @@ stdenv.mkDerivation rec {
     "-DLLDB_CODESIGN_IDENTITY=" # codesigning makes nondeterministic
     "-DClang_DIR=${clang-unwrapped}/lib/cmake"
     "-DLLVM_EXTERNAL_LIT=${lit}/bin/lit"
+  ] ++ stdenv.lib.optionals stdenv.isDarwin [
+    "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
+  ] ++ stdenv.lib.optionals enableManpages [
     "-DLLVM_ENABLE_SPHINX=ON"
     "-DSPHINX_OUTPUT_MAN=ON"
     "-DSPHINX_OUTPUT_HTML=OFF"
-  ] ++ stdenv.lib.optionals stdenv.isDarwin [
-    "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
   ]
 ;
 
