@@ -13,10 +13,10 @@
 , version
 , darwin
 , lit
-, enableManpages ? true
+, enableManpages ? false
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (rec {
   pname = "lldb";
   inherit version;
 
@@ -62,11 +62,6 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   postInstall = ''
-    # man page
-    mkdir -p $out/share/man/man1
-    make docs-lldb-man
-    install docs/man/lldb.1 -t $out/share/man/man1/
-
     # Editor support
     # vscode:
     install -D ../tools/lldb-vscode/package.json $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/package.json
@@ -80,4 +75,27 @@ stdenv.mkDerivation rec {
     license = licenses.ncsa;
     platforms = platforms.all;
   };
-}
+} // stdenv.lib.optionalAttrs enableManpages {
+  pname = "lldb-manpages";
+
+  buildPhase = ''
+    make docs-lldb-man
+  '';
+
+  propagatedBuildInputs = [];
+
+  installPhase = ''
+    # manually install lldb man page
+    mkdir -p $out/share/man/man1
+    install docs/man/lldb.1 -t $out/share/man/man1/
+  '';
+
+  postPatch = null;
+  postInstall = null;
+
+  outputs = [ "out" ];
+
+  doCheck = false;
+
+  meta.description = "man pages for LLDB ${version}";
+})

@@ -51,6 +51,11 @@ let
       python = pkgs.python;  # don't use python-boot
     });
 
+    lldb-manpages = lowPrio (tools.lldb.override {
+      enableManpages = true;
+      python = pkgs.python;  # don't use python-boot
+    });
+
     libclang = tools.clang-unwrapped.lib;
 
     clang = if stdenv.cc.isGNU then tools.libstdcxxClang else tools.libcxxClang;
