@@ -113,6 +113,11 @@ stdenv.mkDerivation (rec {
 
   patches = [ ./lldb-procfs.patch ];
 
+  postPatch = ''
+    substituteInPlace tools/CMakeLists.txt \
+      --replace "EXCLUDE_FROM_ALL" ""
+  '';
+
   nativeBuildInputs = [ cmake python3 which swig lit ]
     ++ stdenv.lib.optionals enableManpages [ python3.pkgs.sphinx python3.pkgs.recommonmark ];
 
