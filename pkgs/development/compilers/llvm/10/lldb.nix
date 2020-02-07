@@ -58,6 +58,10 @@ stdenv.mkDerivation (rec {
     "-DSPHINX_OUTPUT_HTML=OFF"
   ]
 ;
+    postPatch = ''
+      substituteInPlace tools/CMakeLists.txt \
+        --replace "EXCLUDE_FROM_ALL" ""
+    '';
 
   enableParallelBuilding = true;
 
