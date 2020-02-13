@@ -9,7 +9,7 @@
 , libxml2
 , llvm
 , clang-unwrapped
-, python
+, python3
 , version
 , darwin
 , lit
@@ -24,8 +24,8 @@ stdenv.mkDerivation (rec {
 
   patches = [ ./lldb-procfs.patch ];
 
-  nativeBuildInputs = [ cmake python which swig lit ]
-    ++ stdenv.lib.optionals enableManpages [ python.pkgs.sphinx python.pkgs.recommonmark ];
+  nativeBuildInputs = [ cmake python3 which swig lit ]
+    ++ stdenv.lib.optionals enableManpages [ python3.pkgs.sphinx python3.pkgs.recommonmark ];
 
   buildInputs = [
     ncurses

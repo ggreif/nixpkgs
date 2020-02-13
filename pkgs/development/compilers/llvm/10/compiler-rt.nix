@@ -1,10 +1,10 @@
-{ stdenv, version, fetch, cmake, python, llvm, libcxxabi }:
+{ stdenv, version, fetch, cmake, python3, llvm, libcxxabi }:
 stdenv.mkDerivation rec {
   pname = "compiler-rt";
   inherit version;
   src = fetch pname "1nkvs1q7bg6iafj31bzk30i9dmh94brrbrsbd2bdqnxqs5k3x1y2";
 
-  nativeBuildInputs = [ cmake python llvm ];
+  nativeBuildInputs = [ cmake python3 llvm ];
   buildInputs = stdenv.lib.optional stdenv.hostPlatform.isDarwin libcxxabi;
 
   NIX_CFLAGS_COMPILE = [
