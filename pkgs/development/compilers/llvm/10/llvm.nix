@@ -11,6 +11,7 @@
 , release_version
 , zlib
 , buildPackages
+, fetchpatch
 , debugVersion ? false
 , enableManpages ? false
 , enableSharedLibraries ? true
@@ -56,8 +57,15 @@ in stdenv.mkDerivation (rec {
   propagatedBuildInputs = [ ncurses zlib ];
 
   patches = [
-    # 10.0.0rc3-only
+    # 10.0.0-only, these should be present in 10.0.1
     ./llvm-extension-handling.patch
+
+    (fetchpatch {
+      name = "llvm-wasm-dwarf5.patch";
+      url = "https://github.com/llvm/llvm-project/commit/2504f14a06872f2e1755a88b3aab7e6bc280bec7.patch";
+      sha256 = "15w3jyq42c0v0jpj3l4nl42hyv6qdrm1mlm3cl2frm7lh6cz5vn1";
+      stripLen = 1;
+    })
   ];
 
   postPatch = optionalString stdenv.isDarwin ''
