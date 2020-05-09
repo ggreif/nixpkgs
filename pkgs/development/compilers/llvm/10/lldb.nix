@@ -50,6 +50,8 @@ stdenv.mkDerivation (rec {
     "-DLLDB_CODESIGN_IDENTITY=" # codesigning makes nondeterministic
     "-DClang_DIR=${clang-unwrapped}/lib/cmake"
     "-DLLVM_EXTERNAL_LIT=${lit}/bin/lit"
+    "-DPYTHON_HOME=${python3}"
+    "-DLLDB_RELOCATABLE_PYTHON=0"
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
     "-DLLDB_USE_SYSTEM_DEBUGSERVER=ON"
   ] ++ stdenv.lib.optionals enableManpages [
