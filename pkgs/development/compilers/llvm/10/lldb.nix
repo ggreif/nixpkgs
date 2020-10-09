@@ -75,6 +75,8 @@ stdenv.mkDerivation (rec {
     install -D ../tools/lldb-vscode/package.json $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/package.json
     mkdir -p $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/bin
     ln -s $out/bin/lldb-vscode $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/bin
+    # make wasmtime easily accessible
+    ln -s ${wasmtime}/bin/wasmtime $out/bin/lldb-wasmtime
   '';
 
   meta = with stdenv.lib; {
