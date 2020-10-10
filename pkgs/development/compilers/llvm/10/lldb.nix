@@ -24,8 +24,8 @@ stdenv.mkDerivation (rec {
   src = fetchFromGitHub {
     owner  = "ggreif";
     repo   = "llvm-project";
-    rev    = "a3ee0c83fe6027d957fd01e2dfde1db451ff0432";
-    sha256 = "1hw3irivgl7ngg2zv8d2cl8gh360f04hqx650jh6a4y6fkkzg1r6";
+    rev    = "1f162006c1356765ee87f0c993a14af077019ef2";
+    sha256 = "1kl6drq08nw5xdhbl5p5ml4n0jn463iq1k84bfpxsd4hbsmf94lj";
   };
 
   sourceRoot = "source/${pname}";
@@ -66,6 +66,19 @@ stdenv.mkDerivation (rec {
     "-DSPHINX_OUTPUT_MAN=ON"
     "-DSPHINX_OUTPUT_HTML=OFF"
   ];
+
+  postConfigure = ''
+    substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
+      --replace lldb/build/source/VCSVersion.inc lldb/build/source/VCSVersion.incX
+    substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
+      --replace source/VCSVersion.inc: source/VCSVersion.incX:
+    echo >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo source/VCSVersion.inc: >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    printf "\techo '#define LLDB_REVISION '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo '"\"1f162006c1356765ee87f0c993a14af077019ef2\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    printf "\techo '#define LLDB_REPOSITORY '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo '"\"git@github.com:ggreif/llvm-project\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+  '';
 
   enableParallelBuilding = true;
 
