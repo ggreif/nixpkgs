@@ -72,15 +72,13 @@ stdenv.mkDerivation (rec {
 
   postConfigure = ''
     substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
-      --replace lldb/build/source/VCSVersion.inc lldb/build/source/VCSVersion.incX
-    substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
+      --replace lldb/build/source/VCSVersion.inc lldb/build/source/VCSVersion.incX \
       --replace source/VCSVersion.inc: source/VCSVersion.incX:
-    echo >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo source/VCSVersion.inc: source/VCSVersion.incX >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    printf "\techo '#define LLDB_REVISION '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo '"\"${src-repo.rev}\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    printf "\techo '#define LLDB_REPOSITORY '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo '"\"git@github.com:${src-repo.owner}/${src-repo.repo}\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    cat >> ../build/source/CMakeFiles/lldbBase.dir/build.make <<EOF
+    source/VCSVersion.inc: source/VCSVersion.incX
+    	echo '#define LLDB_REVISION "${src-repo.rev}"' >> \$@
+    	echo '#define LLDB_REPOSITORY "git@github.com:${src-repo.owner}/${src-repo.repo}"' >> \$@
+    EOF
   '';
 
   enableParallelBuilding = true;
