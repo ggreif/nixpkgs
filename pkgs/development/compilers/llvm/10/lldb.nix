@@ -28,7 +28,6 @@ stdenv.mkDerivation (rec {
   pname = "lldb";
   inherit version;
 
-
   src = fetchFromGitHub src-repo;
 
   sourceRoot = "source/${pname}";
@@ -74,7 +73,7 @@ stdenv.mkDerivation (rec {
     substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
       --replace lldb/build/source/VCSVersion.inc lldb/build/source/VCSVersion.incX \
       --replace source/VCSVersion.inc: source/VCSVersion.incX:
-    cat >> ../build/source/CMakeFiles/lldbBase.dir/build.make <<EOF
+    cat >> ../build/source/CMakeFiles/lldbBase.dir/build.make << EOF
     source/VCSVersion.inc: source/VCSVersion.incX
     	echo '#define LLDB_REVISION "${src-repo.rev}"' >> \$@
     	echo '#define LLDB_REPOSITORY "git@github.com:${src-repo.owner}/${src-repo.repo}"' >> \$@
