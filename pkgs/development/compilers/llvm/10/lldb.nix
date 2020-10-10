@@ -20,8 +20,8 @@
 let src-repo = {
       owner  = "ggreif";
       repo   = "llvm-project";
-      rev    = "1f162006c1356765ee87f0c993a14af077019ef2";
-      sha256 = "1kl6drq08nw5xdhbl5p5ml4n0jn463iq1k84bfpxsd4hbsmf94lj";
+      rev    = "d17254d75ce9ea2932291ed2866a42ce9685eafe";
+      sha256 = "1i46nrdwldyw1racfa7hraxmw5nbgcq9iryrzgfkgj48il85gc2j";
     };
 in
 stdenv.mkDerivation (rec {
