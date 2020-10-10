@@ -17,16 +17,19 @@
 , enableManpages ? false
 }:
 
+let src-repo = {
+      owner  = "ggreif";
+      repo   = "llvm-project";
+      rev    = "1f162006c1356765ee87f0c993a14af077019ef2";
+      sha256 = "1kl6drq08nw5xdhbl5p5ml4n0jn463iq1k84bfpxsd4hbsmf94lj";
+    };
+in
 stdenv.mkDerivation (rec {
   pname = "lldb";
   inherit version;
 
-  src = fetchFromGitHub {
-    owner  = "ggreif";
-    repo   = "llvm-project";
-    rev    = "1f162006c1356765ee87f0c993a14af077019ef2";
-    sha256 = "1kl6drq08nw5xdhbl5p5ml4n0jn463iq1k84bfpxsd4hbsmf94lj";
-  };
+
+  src = fetchFromGitHub src-repo;
 
   sourceRoot = "source/${pname}";
 
@@ -73,11 +76,11 @@ stdenv.mkDerivation (rec {
     substituteInPlace ../build/source/CMakeFiles/lldbBase.dir/build.make \
       --replace source/VCSVersion.inc: source/VCSVersion.incX:
     echo >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo source/VCSVersion.inc: >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo source/VCSVersion.inc: source/VCSVersion.incX >> ../build/source/CMakeFiles/lldbBase.dir/build.make
     printf "\techo '#define LLDB_REVISION '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo '"\"1f162006c1356765ee87f0c993a14af077019ef2\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo '"\"${src-repo.rev}\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
     printf "\techo '#define LLDB_REPOSITORY '" >> ../build/source/CMakeFiles/lldbBase.dir/build.make
-    echo '"\"git@github.com:ggreif/llvm-project\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
+    echo '"\"git@github.com:${src-repo.owner}/${src-repo.repo}\"" >> $@' >> ../build/source/CMakeFiles/lldbBase.dir/build.make
   '';
 
   enableParallelBuilding = true;
