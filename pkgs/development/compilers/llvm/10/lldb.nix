@@ -88,6 +88,68 @@ stdenv.mkDerivation (rec {
     install -D ../tools/lldb-vscode/package.json $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/package.json
     mkdir -p $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/bin
     ln -s $out/bin/lldb-vscode $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/bin
+
+    # IDE settings
+    cat > $out/share/vscode/settings.json << EOF
+    {
+      "lldb.library": "$out/lib/liblldb${stdenv.targetPlatform.extensions.sharedLibrary}",
+      "debug.allowBreakpointsEverywhere": true,
+      "lldb.launch.sourceLanguages": [
+        "cpp",
+        "rust",
+        "motoko"
+      ],
+      "lldb.launch.sourceMap": {
+        "." : "\''${workspaceFolder}"
+      },
+      "lldb.launch.initCommands": [
+        "settings set plugin.jit-loader.gdb.enable on",
+      ],
+      "update.mode": "none",
+      "update.showReleaseNotes": false,
+      "extensions.autoCheckUpdates": false,
+      "extensions.autoUpdate": false,
+      "workbench.settings.enableNaturalLanguageSearch": false,
+      "workbench.enableExperiments": false,
+      "terminal.integrated.shell.osx": "/bin/bash",
+      "files.autoSave": "afterDelay"
+    }
+    EOF
+
+    # Build task
+    cat > $out/share/vscode/tasks.json << EOF
+    {
+      "version": "2.0.0",
+      "tasks": [
+        {
+          "label": "Build Motoko",
+          "type": "shell",
+          "command": "/Users/ggreif/motoko/src/moc",
+          "args": ["-g", "-o", "\''${fileBasename}.wasm", "\''${fileBasename}", "-wasi-system-api"],
+          "options": {"env": {"MOC_RTS": "/Users/ggreif/motoko/rts/mo-rts.wasm"}},
+          "group": "build"
+        }
+      ]
+    }
+    EOF
+
+    # Debug launcher
+    cat > $out/share/vscode/launch.json << EOF
+    {
+      "version": "0.2.0",
+      "configurations": [
+        {
+          "type": "lldb",
+          "request": "launch",
+          "name": "Debug",
+          "program": "${wasmtime}/bin/wasmtime",
+          "args": ["-g", "\''${fileBasename}.wasm"],
+          "cwd": "\''${workspaceFolder}"
+        }
+      ]
+    }
+    EOF
+
     # make wasmtime easily accessible
     ln -s ${wasmtime}/bin/wasmtime $out/bin/lldb-wasmtime
   '';
