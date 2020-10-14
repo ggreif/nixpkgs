@@ -1,4 +1,5 @@
 { stdenv
+, bashInteractive
 , wasmtime
 , fetchFromGitHub
 , cmake
@@ -43,6 +44,7 @@ stdenv.mkDerivation (rec {
     libedit
     libxml2
     llvm
+    bashInteractive
   ]
   ++ stdenv.lib.optionals stdenv.isDarwin [
     darwin.libobjc
@@ -111,8 +113,8 @@ stdenv.mkDerivation (rec {
       "extensions.autoUpdate": false,
       "workbench.settings.enableNaturalLanguageSearch": false,
       "workbench.enableExperiments": false,
-      "terminal.integrated.shell.linux": "${stdenv.shell}",
-      "terminal.integrated.shell.osx": "${stdenv.shell}",
+      "terminal.integrated.shell.linux": "${bashInteractive}/bin/bash",
+      "terminal.integrated.shell.osx": "${bashInteractive}/bin/bash",
       "files.autoSave": "afterDelay"
     }
     EOF
