@@ -111,7 +111,8 @@ stdenv.mkDerivation (rec {
       "extensions.autoUpdate": false,
       "workbench.settings.enableNaturalLanguageSearch": false,
       "workbench.enableExperiments": false,
-      "terminal.integrated.shell.osx": "/bin/bash",
+      "terminal.integrated.shell.linux": "${stdenv.shell}",
+      "terminal.integrated.shell.osx": "${stdenv.shell}",
       "files.autoSave": "afterDelay"
     }
     EOF
