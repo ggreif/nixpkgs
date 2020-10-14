@@ -16,7 +16,6 @@
 , version
 , darwin
 , lit
-, dune_2
 , ocamlPackages
 , enableManpages ? false
 }:
@@ -39,8 +38,6 @@ let ocaml = ocamlPackages.ocaml;
         dune build
       '';
 
-      #installPhase = "dune install --verbose --prefix=$out";
-      #inherit (dune_2) installFlags;
       inherit (ocamlPackages.dune) installPhase;
 
       meta = {
@@ -55,33 +52,27 @@ let ocaml = ocamlPackages.ocaml;
   moc = stdenv.mkDerivation {
       pname = "motoko-compiler";
       version = "0.1";
+
       src = fetchGit {
-        #owner  = "dfinity";
-        #repo   = "motoko";
         url    = "git@github.com:dfinity-lab/motoko.git";
         ref    = "gabor/dwarf";
         rev    = "4abc0ff69221659b8be7a3e36622e8edfa879113";
-        # sha256 = "1i46nrdwldyw1rfcfa7hraxmw5nbgcq9iryrzgfkgj48il85gc2j";
       };
 
       buildInputs = [
-        dune_2
-        ocaml
-        #ocamlPackages.atdgen
+        vlq
+        ocamlPackages.dune
+        ocamlPackages.ocaml
         ocamlPackages.checkseum
         ocamlPackages.findlib
         ocamlPackages.menhir
         ocamlPackages.cow
-        #ocamlPackages.num
         ocamlPackages.stdint
         ocamlPackages.wasm
-        vlq
         ocamlPackages.zarith
         ocamlPackages.yojson
         ocamlPackages.ppxlib
         ocamlPackages.ppx_inline_test
-        #ocamlPackages.ocaml-migrate-parsetree
-        #ocamlPackages.ppx_tools_versioned
         ocamlPackages.uucp
       ];
 
@@ -92,7 +83,6 @@ let ocaml = ocamlPackages.ocaml;
 
       buildPhase = ''
         make -C src moc
-        #make -C rts
       '';
 
       installPhase = ''
