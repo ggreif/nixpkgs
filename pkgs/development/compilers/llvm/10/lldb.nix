@@ -2,6 +2,7 @@
 , bashInteractive
 , wasmtime
 , fetchFromGitHub
+, fetchGit
 , cmake
 , zlib
 , ncurses
@@ -15,10 +16,93 @@
 , version
 , darwin
 , lit
+, dune_2
+, ocamlPackages
 , enableManpages ? false
 }:
 
-let src-repo = {
+let ocaml = ocamlPackages.ocaml;
+
+    vlq = stdenv.mkDerivation rec {
+      name = "ocaml${ocaml.version}-vlq-${version}";
+
+      src = fetchFromGitHub {
+        owner = "flowtype";
+        repo = "ocaml-vlq";
+        rev = version;
+        sha256 = "09jdgih2n2qwpxnlbcca4xa193rwbd1nw7prxaqlg134l4mbya83";
+      };
+
+      buildInputs = [ ocaml ocamlPackages.findlib ocamlPackages.dune ]; # 
+
+      buildPhase = ''
+        dune build
+      '';
+
+      #installPhase = "dune install --verbose --prefix=$out";
+      #inherit (dune_2) installFlags;
+      inherit (ocamlPackages.dune) installPhase;
+
+      meta = {
+        homepage = https://github.com/flowtype/ocaml-vlq;
+        platforms = ocaml.meta.platforms or [];
+        description = "A simple library for encoding variable-length quantities";
+        license = stdenv.lib.licenses.mit;
+        maintainers = with stdenv.lib.maintainers; [ vbgl ];
+      };
+    };
+
+  moc = stdenv.mkDerivation {
+      pname = "motoko-compiler";
+      version = "0.1";
+      src = fetchGit {
+        #owner  = "dfinity";
+        #repo   = "motoko";
+        url    = "git@github.com:dfinity-lab/motoko.git";
+        ref    = "gabor/dwarf";
+        rev    = "4abc0ff69221659b8be7a3e36622e8edfa879113";
+        # sha256 = "1i46nrdwldyw1rfcfa7hraxmw5nbgcq9iryrzgfkgj48il85gc2j";
+      };
+
+      buildInputs = [
+        dune_2
+        ocaml
+        #ocamlPackages.atdgen
+        ocamlPackages.checkseum
+        ocamlPackages.findlib
+        ocamlPackages.menhir
+        ocamlPackages.cow
+        #ocamlPackages.num
+        ocamlPackages.stdint
+        ocamlPackages.wasm
+        vlq
+        ocamlPackages.zarith
+        ocamlPackages.yojson
+        ocamlPackages.ppxlib
+        ocamlPackages.ppx_inline_test
+        #ocamlPackages.ocaml-migrate-parsetree
+        #ocamlPackages.ppx_tools_versioned
+        ocamlPackages.uucp
+      ];
+
+      patches = [ ./mo-rts.wasm ];
+      patchPhase = ''
+        cp $patches ./mo-rts.wasm
+      '';
+
+      buildPhase = ''
+        make -C src moc
+        #make -C rts
+      '';
+
+      installPhase = ''
+        mkdir -p $out/bin $out/lib
+        cp src/_build/default/exes/moc.exe $out/bin/moc
+        cp ./mo-rts.wasm $out/lib
+      '';
+    };
+
+    src-repo = {
       owner  = "ggreif";
       repo   = "llvm-project";
       rev    = "d17254d75ce9ea2932291ed2866a42ce9685eafe";
@@ -45,6 +129,7 @@ stdenv.mkDerivation (rec {
     libxml2
     llvm
     bashInteractive
+    moc
   ]
   ++ stdenv.lib.optionals stdenv.isDarwin [
     darwin.libobjc
@@ -127,9 +212,9 @@ stdenv.mkDerivation (rec {
         {
           "label": "Build Motoko",
           "type": "shell",
-          "command": "/Users/ggreif/motoko/src/moc",
+          "command": "${moc}/bin/moc",
           "args": ["-g", "-o", "\''${fileBasename}.wasm", "\''${fileBasename}", "-wasi-system-api"],
-          "options": {"env": {"MOC_RTS": "/Users/ggreif/motoko/rts/mo-rts.wasm"}},
+          "options": {"env": {"MOC_RTS": "${moc}/lib/mo-rts.wasm"}},
           "group": "build"
         }
       ]

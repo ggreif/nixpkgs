@@ -3,6 +3,8 @@
 , buildPackages
 , buildLlvmTools # tools, but from the previous stage, for cross
 , targetLlvmLibraries # libraries, but from the next stage, for cross
+, dune_2
+, ocamlPackages
 }:
 
 let
@@ -81,7 +83,9 @@ let
 
     lld = callPackage ./lld.nix {};
 
-    lldb = callPackage ./lldb.nix {};
+    lldb = callPackage ./lldb.nix {
+      inherit dune_2 ocamlPackages fetchGit;
+    };
 
     # Below, is the LLVM bootstrapping logic. It handles building a
     # fully LLVM toolchain from scratch. No GCC toolchain should be

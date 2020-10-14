@@ -9462,6 +9462,8 @@ in
     inherit (stdenvAdapters) overrideCC;
     buildLlvmTools = buildPackages.llvmPackages_10.tools;
     targetLlvmLibraries = targetPackages.llvmPackages_10.libraries;
+    inherit (buildPackages) dune_2;
+    ocamlPackages = buildPackages.ocaml-ng.ocamlPackages_4_08;
   };
 
   llvmPackages_11 = callPackage ../development/compilers/llvm/11 ({
