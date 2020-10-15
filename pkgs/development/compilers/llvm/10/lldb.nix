@@ -232,8 +232,15 @@ stdenv.mkDerivation (rec {
     }
     EOF
 
-    # make wasmtime easily accessible
-    ln -s ${wasmtime}/bin/wasmtime $out/bin/lldb-wasmtime
+    # Setup script for `codium` workspace
+    cat > $out/share/vscode/setup-workspace.sh << EOF
+    VSCODIUM_SUPPORT=$out/share/vscode
+
+    cp \''${VSCODIUM_SUPPORT}/settings.json \$HOME/Library/Application\ Support/VSCodium/User/
+    cp \''${VSCODIUM_SUPPORT}/settings.json \$HOME/.config/VSCodium/User/
+    cp \''${VSCODIUM_SUPPORT}/launch.json ./.vscode/
+    cp \''${VSCODIUM_SUPPORT}/tasks.json ./.vscode/
+    EOF
   '';
 
   meta = with stdenv.lib; {
