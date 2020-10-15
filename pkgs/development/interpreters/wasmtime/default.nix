@@ -8,7 +8,7 @@ rustPlatform.buildRustPackage rec {
     owner = "bytecodealliance";
     repo = "${pname}";
     rev = "dev";
-    sha256 = "031k1j0wvh6szdap208n8ypclfylhxnkl38zld1mavrl6znd42y4";
+    sha256 = "0nrsfr7lzfk9y12da51nlvibv7c2y6dracad8dzjac6c75v1n964";
     fetchSubmodules = true;
   };
 
