@@ -79,6 +79,10 @@ let ocaml = ocamlPackages.ocaml;
       patches = [ ./mo-rts.wasm ];
       patchPhase = ''
         cp $patches ./mo-rts.wasm
+        runHook postPatch
+      '';
+      postPatch = ''
+        patchShebangs src
       '';
 
       buildPhase = ''
