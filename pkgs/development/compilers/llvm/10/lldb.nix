@@ -212,7 +212,9 @@ stdenv.mkDerivation (rec {
           "label": "Build Motoko",
           "type": "shell",
           "command": "${moc}/bin/moc",
-          "args": ["-g", "-o", "\''${fileBasename}.wasm", "\''${fileBasename}", "-wasi-system-api"],
+          "args": ["-wasi-system-api", "-g",
+                   "-o", "\''${relativeFileDirname}/\''${fileBasename}.wasm",
+                   "\''${relativeFileDirname}/\''${fileBasename}"],
           "options": {"env": {"MOC_RTS": "${moc}/lib/mo-rts.wasm"}},
           "group": "build"
         }
@@ -230,7 +232,7 @@ stdenv.mkDerivation (rec {
           "request": "launch",
           "name": "Debug",
           "program": "${wasmtime}/bin/wasmtime",
-          "args": ["-g", "\''${fileBasename}.wasm"],
+          "args": ["-g", "\''${relativeFileDirname}/\''${fileBasename}.wasm"],
           "cwd": "\''${workspaceFolder}"
         }
       ]
