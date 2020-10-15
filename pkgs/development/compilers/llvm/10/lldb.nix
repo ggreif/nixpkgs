@@ -61,8 +61,8 @@ let ocaml = ocamlPackages.ocaml;
 
       buildInputs = [
         vlq
+        ocaml
         ocamlPackages.dune
-        ocamlPackages.ocaml
         ocamlPackages.checkseum
         ocamlPackages.findlib
         ocamlPackages.menhir
