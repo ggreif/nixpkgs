@@ -145,6 +145,7 @@ stdenv.mkDerivation (rec {
     "-DLLVM_ENABLE_RTTI=OFF"
     "-DClang_DIR=${clang-unwrapped}/lib/cmake"
     "-DLLVM_EXTERNAL_LIT=${lit}/bin/lit"
+    "-DLLDB_ENABLE_PYTHON=ON"
     "-DPYTHON_HOME=${python3}"
     "-DLLDB_RELOCATABLE_PYTHON=0"
   ] ++ stdenv.lib.optionals stdenv.isDarwin [
