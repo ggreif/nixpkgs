@@ -218,7 +218,10 @@ stdenv.mkDerivation (rec {
           "args": ["-wasi-system-api", "-g", "\''${relativeFile}",
                    "-o", "\''${relativeFileDirname}/\''${fileBasename}.wasm"],
           "options": {"env": {"MOC_RTS": "${moc}/lib/mo-rts.wasm"}},
-          "group": "build"
+          "group": {
+            "kind": "build",
+            "isDefault": true
+          }
         }
       ]
     }
