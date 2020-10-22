@@ -56,7 +56,7 @@ let ocaml = ocamlPackages.ocaml;
       src = fetchGit {
         url    = "git@github.com:dfinity-lab/motoko.git";
         ref    = "gabor/dwarf";
-        rev    = "4abc0ff69221659b8be7a3e36622e8edfa879113";
+        rev    = "45069b175baaefef821c61785f621f446a94eff4";
       };
 
       buildInputs = [
